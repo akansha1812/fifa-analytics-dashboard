@@ -1,0 +1,22 @@
+$(document).ready(function(){
+			$("#myCarousel1").carousel();
+
+			$(".item11").click(function(){
+			$("#myCarousel1").carousel(0);
+			});
+			$(".item21").click(function(){
+			$("#myCarousel1").carousel(1);
+			});
+			$(".item31").click(function(){
+			$("#myCarousel1").carousel(2);
+			});
+			$(".item41").click(function(){
+			$("#myCarousel1").carousel(3);
+			});
+			$(".left").click(function(){
+		        $("#myCarousel1").carousel("prev");
+		    });
+		    $(".right").click(function(){
+		        $("#myCarousel1").carousel("next");
+			});
+			});

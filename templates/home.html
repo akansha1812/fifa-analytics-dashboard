@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html>
+<meta charset="utf-8">
+
+<link rel="stylesheet" href="../static/css/bootstrap.min.css">
+<link rel="stylesheet" href="../static/css/d3-tip.css">
+
+<script src="../static/js/d3.v4.js"></script>
+<script src="../static/js/d3-tip.js"></script>
+<script src="../static/js/jquery-3.5.1.js"></script>
+<script src="../static/js/popper.min.js"></script>
+<script src="../static/js/jquery-3.5.1.js"></script>
+<script src="../static/js/bootstrap.min.js"></script>
+<body>
+
+
+<div id="plot_area"></div>
+
+<p>
+  <label># bins</label>
+  <input type="number" min="1" max="100" step="30" value="20" id="nBin">
+</p>
+</body>
+<script>
+
+$("body").bind("dragover", function(e){
+    var dragX = e.pageX, dragY = e.pageY;
+
+    console.log("X: "+dragX+" Y: "+dragY);
+});
+
+function barplot(column_name) {
+
+$('#plot_area').empty();
+
+var margin = {top: 10, right: 30, bottom: 30, left: 40},
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+var svg = d3.select("#plot_area")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+
+d3.csv("../static/asteroid_"+column_name+".csv", function(data) {
+
+data.counts = +data.counts;
+var x = d3.scaleBand()
+  .range([ 0, width ])
+  .domain(data.map(function(d) { return d[column_name]; }))
+  .padding(0.2);
+svg.append("g")
+  .attr("transform", "translate(0," + height + ")")
+  .call(d3.axisBottom(x))
+  .selectAll("text")
+    .attr("transform", "translate(-10,0)rotate(-45)")
+    .style("text-anchor", "end");
+
+// Add Y axis
+var y = d3.scaleLinear()
+  .domain([0, d3.max(data, function(d) { return +d.counts; })])
+  .range([ height, 0]);
+svg.append("g")
+  .call(d3.axisLeft(y));
+
+var tool_tip = d3.tip()
+      .attr("class", "d3-tip")
+      .offset([-8, 0])
+      .html(function(d) { return "Value: " + (height - y(d.counts))/2; });
+    svg.call(tool_tip);
+
+var fillcolor = function(d) {
+	tool_tip.show(d)
+    d3.select(this)
+        	.style("fill", "red");	 
+    }
+var restorecolor = function(d) {
+	tool_tip.hide(d)
+    d3.select(this)
+        	.style("fill", "#69b5a2");	 
+    }
+// Bars
+svg.selectAll("mybar")
+  .data(data)
+  .enter()
+  .append("rect")
+    .attr("x", function(d) { return x(d[column_name]); })
+    .attr("y", function(d) { return y(d.counts); })
+    .attr("width", x.bandwidth())
+    .attr("height", function(d) { return height - y(d.counts); })
+    .attr("fill", "#69b3a2")
+    .on('mouseover', fillcolor)
+    .on('mouseout', restorecolor);
+
+});
+
+}
+function histplot(column_name) {
+
+$('#plot_area').empty();
+
+var margin = {top: 10, right: 30, bottom: 30, left: 40},
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+var svg = d3.select("#plot_area")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+
+d3.csv("../static/asteroid_final.csv", function(data) {
+
+
+  var x = d3.scaleLinear()
+      .domain([0, d3.max(data, function(d){return +d[column_name]})])
+      .range([0, width]);
+  svg.append("g")
+      .attr("transform", "translate(0," + height + ")")
+      .call(d3.axisBottom(x));
+
+  var y = d3.scaleLinear()
+      .range([height, 0]);
+  var yAxis = svg.append("g")
+
+  var histogram = d3.histogram()
+	    .value(function(d) { return d[column_name]; })   // I need to give the vector of value
+	    .domain(x.domain())  // then the domain of the graphic
+	    .thresholds(x.ticks(20)); // then the numbers of bins
+
+  var bins = histogram(data);
+  console.log(bins);
+  y.domain([0, d3.max(bins, function(d) { return d.length; })]);   // d3.hist has to be called before the Y axis obviously
+  yAxis
+      .transition()
+      .duration(1000)
+      .call(d3.axisLeft(y));
+
+  var tool_tip = d3.tip()
+      .attr("class", "d3-tip")
+      .offset([-8, 0])
+      .html(function(d) { return "Value: " + (height - y(d.length))/2; });
+    svg.call(tool_tip);
+
+	var fillcolor = function(d) {
+		tool_tip.show(d)
+	    d3.select(this)
+            	.style("fill", "red");	 
+        }
+    var restorecolor = function(d) {
+    	tool_tip.hide(d)
+	    d3.select(this)
+            	.style("fill", "#69b5a2");	 
+        }
+    // Join the rect with the bins data
+  var u = svg.selectAll("rect")
+        .data(bins)
+  svg.selectAll("rect")
+      .data(bins)
+      .enter()
+      .append("rect")
+        .attr("x", 1)
+        .attr("transform", function(d) { return "translate(" + x(d.x0) + "," + y(d.length) + ")"; })
+        .attr("width", function(d) { return x(d.x1) - x(d.x0) -1 ; })
+        .attr("height", function(d) { return height - y(d.length); })
+        .style("fill", "#69b5a2")
+        .on('mouseover', fillcolor)
+        .on('mouseout', restorecolor);
+
+});
+
+}
+
+function scatterplot(column_name,column_name2) {
+
+$('#plot_area').empty();
+
+var margin = {top: 10, right: 30, bottom: 30, left: 40},
+    width = 460 - margin.left - margin.right,
+    height = 400 - margin.top - margin.bottom;
+
+var svg = d3.select("#plot_area")
+  .append("svg")
+    .attr("width", width + margin.left + margin.right)
+    .attr("height", height + margin.top + margin.bottom)
+  .append("g")
+    .attr("transform",
+          "translate(" + margin.left + "," + margin.top + ")");
+
+
+d3.csv("../static/asteroid_final.csv", function(data) {
+
+  // Add X axis
+  var x = d3.scaleLinear()
+    .domain([0, 1])
+    .range([ 0, width ]);
+  svg.append("g")
+    .attr("transform", "translate(0," + height + ")")
+    .call(d3.axisBottom(x));
+
+  // Add Y axis
+  var y = d3.scaleLinear()
+    .domain([0, 1])
+    .range([ height, 0]);
+  svg.append("g")
+    .call(d3.axisLeft(y));
+
+  // Add a tooltip div. Here I define the general feature of the tooltip: stuff that do not depend on the data point.
+  // Its opacity is set to 0: we don't see it by default.
+  var tooltip = d3.select("#plot_area")
+    .append("div")
+    .style("opacity", 0)
+    .attr("class", "tooltip")
+    .style("background-color", "white")
+    .style("border", "solid")
+    .style("border-width", "1px")
+    .style("border-radius", "5px")
+    .style("padding", "10px")
+
+     // A function that change this tooltip when the user hover a point.
+  // Its opacity is set to 1: we can now see it. Plus it set the text and position of tooltip depending on the datapoint (d)
+  var mouseover = function(d) {
+    tooltip
+      .style("opacity", 1)
+  }
+
+  var mousemove = function(d) {
+    tooltip
+      .html("The exact value on<br>the x-axis is: " + d[column_name])
+      .style("left", (d3.mouse(this)[0]+90) + "px") // It is important to put the +90: other wise the tooltip is exactly where the point is an it creates a weird effect
+      .style("top", (d3.mouse(this)[1]) + "px")
+  }
+
+  // A function that change this tooltip when the leaves a point: just need to set opacity to 0 again
+  var mouseleave = function(d) {
+    tooltip
+      .transition()
+      .duration(200)
+      .style("opacity", 0)
+  }
+
+  // Add dots
+  svg.append('g')
+    .selectAll("dot")
+    .data(data.filter(function(d,i){return i<50})) // the .filter part is just to keep a few dots on the chart, not all of them
+    .enter()
+    .append("circle")
+      .attr("cx", function (d) { return x(d[column_name]); } )
+      .attr("cy", function (d) { return y(d[column_name2]); } )
+      .attr("r", 7)
+      .style("fill", "#69b3a2")
+      .style("opacity", 0.7)
+      .style("stroke", "white")
+    .on("mouseover", mouseover )
+    .on("mousemove", mousemove )
+    .on("mouseleave", mouseleave )
+
+	});
+
+}
+
+
+scatterplot('sm_axis','eccentricity')
+histplot('sm_axis');
+barplot('tt')
+</script>
+</html>
