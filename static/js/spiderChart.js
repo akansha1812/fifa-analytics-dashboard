@@ -1,6 +1,5 @@
-function createSpiderChart(){
+function createSpiderChart(ID,Name){
 
-ID= 'Cristiano Ronaldo'
 
 fetch('/spiderChart/'+ID)
 .then(function(response){
@@ -8,7 +7,7 @@ fetch('/spiderChart/'+ID)
 }).then(function(data_input){
 
 var data = [
-				{ name: ID,
+				{ name: Name,
 
 					axes: data_input
 				}

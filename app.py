@@ -126,7 +126,7 @@ def test():
 @app.route("/spiderChart/<prop>")
 def spiderChart(prop):
     df_sc = df_clean.copy()
-    df_sc = df_sc.loc[df_sc['Name'].astype(str)== str(prop)]
+    df_sc = df_sc.loc[df_sc['ID'].astype(str)== str(prop)]
 
     # print(df_sc)
     #define cols
@@ -147,7 +147,7 @@ def spiderChart(prop):
     df_sc = df_sc[['Striking','Dribbling Ability','Passing','Defending','Physical','Goalkeeping']]
     df_sc_T = df_sc.T
     df_sc_T['axis'] = df_sc_T.index
-    df_sc_T = df_sc_T.rename(columns = {1: "value"})
+    df_sc_T = df_sc_T.rename(columns = {df_sc_T.columns[0]: "value"})
     print(df_sc_T)
     # print(df_sc.columns)
     result = list(df_sc_T.T.to_dict().values())
@@ -155,10 +155,20 @@ def spiderChart(prop):
     return jsonify(result)
 
 
+@app.route("/player_card/<prop>")
+def player_card(prop):
+    df_sc = df_clean.copy()
+    df_sc = df_sc.loc[df_sc['ID'].astype(str)== str(prop)]
+    df_sc = df_sc[['Name','Age','Nationality','Club','Overall']]
+    result = list(df_sc.T.to_dict().values())
+    print("Player Card " , result)
+    return jsonify(result)
+
+
+
 @app.route("/pcp")
 def pcp():
-    df_pcp = df_clean.copy()
-    df_pcp = df_pcp[['Club','Age','Value','Wage','Overall','Release Clause']]
+    df_pcp = df_clean[['Club','Age','Value','Wage','Overall','Release Clause']]
     attr_cols = ['Age','Value','Wage','Overall','Release Clause']
     df_pcp_agg = df_pcp.groupby("Club").mean()
     df_pcp_agg['Wage'] = df_pcp_agg['Wage'].astype(str).astype(float)
@@ -169,30 +179,11 @@ def pcp():
     return jsonify(result)
 
 
-df = pd.read_csv("data.csv")
-df['Contract Valid Until'] = df['Contract Valid Until'].replace(r'\d{1,2}-\w{3}-', '20', regex=True)
-df_clean = df[df['Position'].notna()]
-df_clean = df_clean[df_clean['Club'].notna()]
-
-df_clean['Value'] = df_clean['Value'].str.replace('€','')
-df_clean.Value = (df_clean.Value.replace(r'[KMB]+$', '', regex=True)
-            .astype(float) * df_clean.Value.str.extract(r'[\d\.]+([KMB]+)', expand=False)
-            .fillna(1).replace(['K','M', 'B'], [10**3, 10**6, 10**9]).astype(int))
-
-df_clean['Wage'] = df_clean['Wage'].str.replace('€','')
-df_clean.Wage = (df_clean.Wage.replace(r'[KMB]+$', '', regex=True)
-            .astype(float) * df_clean.Wage.str.extract(r'[\d\.]+([KMB]+)', expand=False)
-            .fillna(1).replace(['K','M', 'B'], [10**3, 10**6, 10**9]).astype(int))
-
-df_clean['Release Clause'] = df_clean['Release Clause'].str.replace('€','')
-df_clean['Release Clause'] = (df_clean['Release Clause'].replace(r'[KMB]+$', '', regex=True)
-            .astype(float) * df_clean['Release Clause'].str.extract(r'[\d\.]+([KMB]+)', expand=False)
-            .fillna(1).replace(['K','M', 'B'], [10**3, 10**6, 10**9]).astype(int))
+df_clean = pd.read_csv("static/fifa_processed_final.csv")
 
 @app.route("/wc")
 def wc():
-    df_wc = df_clean.copy()
-    df_wc = df_wc[['Name','Overall']]
+    df_wc = df_clean[['Name','Overall']]
     x = df_wc[(df_wc['Overall'] <= 80)].sample(n=10)
     x['Overall'] = 7
     x1 = df_wc[(df_wc['Overall'] < 87) & (df_wc['Overall'] > 80)].sample(n=40)

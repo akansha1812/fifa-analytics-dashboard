@@ -26,6 +26,7 @@
     <script src="../static/js/world_map.js"></script>
     <script src="../static/js/line_plot.js"></script>
     <script src="../static/js/word_cloud.js"></script>
+    <script src="../static/js/player_card.js"></script>
     <script src="https://cdn.jsdelivr.net/gh/holtzy/D3-graph-gallery@master/LIB/d3.layout.cloud.js"></script>
   </head>
   <body>
@@ -111,19 +112,19 @@
                     <img src="../static/images/21_120.png" style="margin-top: 15%;">
                     <br>
                     <br>
-                    Cristiano Ronaldo
+                    <span id="name">Ronaldo</span>
                     <br>
                     <br>
-                    Age : 33
+                    <span id="age">Age : 33</span>
                     <br>
                     <br>
-                    Nationality : Portugal
+                    <span id="nationality">Nationality : Portugal</span>
                     <br>
                     <br>
-                    Club : Juventus
+                    <span id="club">Club : Juventus</span>
                     <br>
                     <br>
-                    Overall : 94
+                    <span id="overall">Overall : 94</span>
                     <br>
                     <br>
               </div>
@@ -154,9 +155,10 @@
 <script>
   world_map();
   line_plot('age');
-  createSpiderChart();
+  createSpiderChart('183277','Hazard');
   pcp();
   wc();
+  player_card('183277')
 </script>
 <style>
 
