@@ -1,14 +1,22 @@
-function wc(){
+function wc(age_start,age_end){
 
 
-fetch('/wc')
-        .then(function(response){
-        return response.json()
-        }).then(function(data)  {
+var xhr = new XMLHttpRequest();
+var url = "http://localhost:5000/wc_filter";
+xhr.open("POST", url, true);
+xhr.setRequestHeader("Content-Type", "application/json");
+xhr.onreadystatechange = function () {
+    if (xhr.readyState === 4 && xhr.status === 200) {
+        var data = JSON.parse(xhr.responseText);
+        console.log("Response : ", data);
+        wc(data);
+    }
+};
+var filter = JSON.stringify({"age_start": age_start, "age_end": age_end});
+xhr.send(filter);
 
+function wc(data) {
 
-
-// List of words
 var myWords = data
 // set the dimensions and margins of the graph
 var margin = {top: 10, right: 10, bottom: 10, left: 10},
@@ -16,6 +24,7 @@ var margin = {top: 10, right: 10, bottom: 10, left: 10},
     height = 450 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
+d3.select("#word_cloud svg").remove();
 var svg = d3.select("#word_cloud").append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom)
@@ -55,5 +64,8 @@ var color = d3.scaleOrdinal(d3.schemeCategory10);
         })
         .text(function(d) { return d.text; });
 }
-});
+
+}
+// List of words
+
 }

@@ -92,6 +92,9 @@ d3.csv("../static/age_counts.csv",
         if (!idleTimeout) return idleTimeout = setTimeout(idled, 350); // This allows to wait a little bit
         x.domain([ 4,8])
       }else{
+        // console.log("X range start : ",x.invert(extent[0]));
+        // console.log("X range start : ",x.invert(extent[1]));
+        wc(x.invert(parseInt(extent[0])),parseInt(x.invert(extent[1])));
         x.domain([ x.invert(extent[0]), x.invert(extent[1]) ])
         line.select(".brush").call(brush.move, null) // This remove the grey brush area as soon as the selection has been done
       }
@@ -124,6 +127,7 @@ d3.csv("../static/age_counts.csv",
     // If user double click, reinitialize the chart
     svg.on("dblclick",function(){
       x.domain(d3.extent(data, function(d) { return d[column_name]; }))
+      wc(10,50);
       xAxis.transition().call(d3.axisBottom(x))
       line
         .select('.line')
