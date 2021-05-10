@@ -1,6 +1,8 @@
 function createSpiderChart(ID,Name){
 
 
+
+
 fetch('/spiderChart/'+ID)
 .then(function(response){
   return response.json()

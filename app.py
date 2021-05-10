@@ -183,7 +183,7 @@ df_clean = pd.read_csv("static/fifa_processed_final.csv")
 
 @app.route("/wc")
 def wc():
-    df_wc = df_clean[['Name','Overall']]
+    df_wc = df_clean[['Name','Overall','ID']]
     x = df_wc[(df_wc['Overall'] <= 80)].sample(n=10)
     x['Overall'] = 7
     x1 = df_wc[(df_wc['Overall'] < 87) & (df_wc['Overall'] > 80)].sample(n=40)
@@ -200,6 +200,7 @@ def wc():
     x = x.append(x1)
     x = x.sample(frac=1)
     x['c'] = (x.index)%9 +1
+    print(x)
     result = list(x.T.to_dict().values())
     return jsonify(result)
     

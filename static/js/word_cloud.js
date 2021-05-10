@@ -27,7 +27,7 @@ var svg = d3.select("#word_cloud").append("svg")
 // Wordcloud features that are different from one word to the other must be here
 var layout = d3.layout.cloud()
   .size([width, height])
-  .words(myWords.map(function(d) { return {text: d.Name, size:d.Overall , c: d.c}; }))
+  .words(myWords.map(function(d) { return {text: d.Name, size:d.Overall , c: d.c, id: d.ID}; }))
   .padding(2)        //space between words
   .rotate(function() { return ~~(Math.random() * 2) * 90; })
   .fontSize(function(d) { return d.size; })      // font size of words
@@ -39,6 +39,9 @@ layout.start();
 
 
 function draw(words) {
+console.log(" print data : ")
+console.log(words)
+
 var color = d3.scaleOrdinal(d3.schemeCategory10);
   svg
     .append("g")
@@ -53,7 +56,11 @@ var color = d3.scaleOrdinal(d3.schemeCategory10);
         .attr("transform", function(d) {
           return "translate(" + [d.x, d.y] + ")rotate(" + d.rotate + ")";
         })
-        .text(function(d) { return d.text; });
+        .text(function(d) { return d.text; })
+        .on('click', function(d) {
+        console.log("Id AND Name : ",d.id,' , ',d.text )
+        createSpiderChart(d.id,d.text)
+        player_card(d.id)});
 }
 });
 }
