@@ -84,7 +84,7 @@ def wc_filter():
         filters = request.json
         print("Content :",filters)
         df_wc = df_clean[(df_clean.Age >= filters['age_start']) & (df_clean.Age <= filters['age_end'])]
-        df_wc = df_wc[['Name','Overall']]
+        df_wc = df_wc[['Name','Overall','ID']]
         print("length",len(df_wc))
         s = min(len(df_wc[(df_wc['Overall'] <= 80)]),10)
         x = df_wc[(df_wc['Overall'] <= 80)].sample(n=s)
@@ -105,6 +105,7 @@ def wc_filter():
         x = x.sample(frac=1)
         x['c'] = (x.index)%9 +1
         result = list(x.T.to_dict().values())
+
     return jsonify(result)
 
 if __name__ == '__main__':
