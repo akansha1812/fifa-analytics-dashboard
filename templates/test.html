@@ -90,9 +90,20 @@
           <div class="col-xs-6 col-md-4" id="world_map" style="  border-radius: 25px;border: 2px solid #010A1A;background-color: #ffffff;height: 450px;margin-left: 1%;">
             <h4 style="text-align: center;font-size: 150%">World Choropleth Map</h4>
           </div>   
-          <div class="col-xs-6 col-md-4" style="padding-left: 2%;width: 27%;border-radius: 25px;border: 2px solid #010A1A;background-color: #ffffff;height: 450px;" id="line_plot" >
-            <h4 style="text-align: center;font-size: 150%">Line Plot</h4>
+          <div class="col-xs-6 col-md-4" style="padding-left: 2%;width: 27%;border-radius: 25px;border: 2px solid #010A1A;background-color: #ffffff;height: 450px;" id="Age" >
+            <h4 style="text-align: center;font-size: 150%">Line Plot Age</h4>
           </div>
+
+        <div class="col-xs-6 col-md-4" style="padding-left: 2%;width: 27%;border-radius: 25px;border: 2px solid #010A1A;background-color: #ffffff;height: 450px;" id="Value" >
+            <h4 style="text-align: center;font-size: 150%">Line Plot Value</h4>
+          </div>
+
+        <div class="col-xs-6 col-md-4" style="padding-left: 2%;width: 27%;border-radius: 25px;border: 2px solid #010A1A;background-color: #ffffff;height: 450px;" id="Overall" >
+            <h4 style="text-align: center;font-size: 150%">Line Plot Overall</h4>
+          </div>
+
+
+
           <div class="col-xs-6 col-md-4" id="pcp" style="  padding-left: 1%;border-radius: 25px;border: 2px solid #010A1A;background-color: #ffffff;height: 450px;width: 730px;">
             <h4 style="text-align: center;font-size: 150%">Parallel Co-ordinate Plot</h4>
           </div>  
@@ -154,11 +165,19 @@
 
 
 <script>
+
+  var country_name = "world";
+  var age_start = 10,value_start=0,rating_start=0;
+  var age_end = 50,value_end = 210500000,rating_end=200 ;
+
+
   world_map();
-  line_plot('age');
+  line_plot('Age');
+  line_plot('Value');
+  line_plot('Overall');
   createSpiderChart('183277','Hazard');
   pcp();
-  wc(18,40);
+  wc();
   player_card('183277')
 </script>
 <link rel="stylesheet" type="text/css" href="../static/css/pro-style.css">

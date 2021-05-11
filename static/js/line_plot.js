@@ -7,7 +7,8 @@ var margin = {top: 10, right: 30, bottom: 30, left: 60},
     height = 400 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
-var svg = d3.select("#line_plot")
+d3.selectAll("#"+column_name+" svg").remove()
+var svg = d3.select("#"+column_name)
   .append("svg")
     .attr("width", width + margin.left + margin.right)
     .attr("height", height + margin.top + margin.bottom + 10)
@@ -15,16 +16,12 @@ var svg = d3.select("#line_plot")
     .attr("transform",
           "translate(" + margin.left + "," + margin.top + ")");
 
+console.log(" lineplot  country name : ",country_name)
 //Read the data
-d3.csv("../static/age_counts.csv",
-
-  // When reading the csv, I must format variables:
-  // function(d){
-  //   return { date : d3.timeParse("%Y-%m-%d")(d.date), value : d.value }
-  // },
-
-  // Now I can use this dataset:
-  function(data) {
+fetch('/linePlot/'+country_name+'/'+column_name)
+.then(function(response){
+  return response.json()
+}).then(function(data){
 
     // Add X axis --> it is a date format
     var x = d3.scaleLinear()
@@ -62,7 +59,7 @@ d3.csv("../static/age_counts.csv",
     // Add the line
     line.append("path")
       .datum(data)
-      .attr("class", "line")  // I add the class line to be able to modify this line later on.
+      .attr("class", "line "+column_name)  // I add the class line to be able to modify this line later on.
       .attr("fill", "none")
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
@@ -94,7 +91,17 @@ d3.csv("../static/age_counts.csv",
       }else{
         // console.log("X range start : ",x.invert(extent[0]));
         // console.log("X range start : ",x.invert(extent[1]));
-        wc(x.invert(parseInt(extent[0])),parseInt(x.invert(extent[1])));
+
+        if(column_name=='Age'){
+            age_start = x.invert(parseInt(extent[0]))
+            age_end   = parseInt(x.invert(extent[1]))}
+        if(column_name=='Value'){
+            value_start = x.invert(parseInt(extent[0]))
+            value_end   = parseInt(x.invert(extent[1]))}
+        if(column_name=='Overall'){
+            rating_start = x.invert(parseInt(extent[0]))
+            rating_end   = parseInt(x.invert(extent[1]))}
+        wc();
         x.domain([ x.invert(extent[0]), x.invert(extent[1]) ])
         line.select(".brush").call(brush.move, null) // This remove the grey brush area as soon as the selection has been done
       }
@@ -102,7 +109,7 @@ d3.csv("../static/age_counts.csv",
       // Update axis and line position
       xAxis.transition().duration(1000).call(d3.axisBottom(x))
       line
-          .select('.line')
+          .select('.'+column_name)
           .transition()
           .duration(1000)
           .attr("d", d3.line()
@@ -127,10 +134,21 @@ d3.csv("../static/age_counts.csv",
     // If user double click, reinitialize the chart
     svg.on("dblclick",function(){
       x.domain(d3.extent(data, function(d) { return d[column_name]; }))
-      wc(10,50);
+
+      if(column_name=='Age'){
+            age_start = 10;
+            age_end   = 50;}
+      if(column_name=='Value'){
+            value_start = 0
+            value_end   = 210500000}
+      if(column_name=='Overall'){
+            rating_start = 0
+            rating_end   = 200}
+
+      wc();
       xAxis.transition().call(d3.axisBottom(x))
       line
-        .select('.line')
+        .select('.'+column_name)
         .transition()
         .attr("d", d3.line()
           .x(function(d) { return x(d[column_name]) })
@@ -138,6 +156,6 @@ d3.csv("../static/age_counts.csv",
       )
     });
 
-})
+});
 
 };

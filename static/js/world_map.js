@@ -85,6 +85,22 @@ function ready(error, data, population) {
             .style("opacity", 0.8)
             .style("stroke","white")
             .style("stroke-width",0.3);
+        })
+        .on('click',function(d){
+        country_name = d.properties.name
+        pcp()
+        line_plot('Age');
+        line_plot('Value');
+        line_plot('Overall');
+        wc()
+        })
+        .on('dblclick',function(d){
+        country_name = "world"
+        pcp()
+        line_plot('Age');
+        line_plot('Value');
+        line_plot('Overall');
+        wc()
         });
 
   svg.append("path")
