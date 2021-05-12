@@ -3,8 +3,8 @@ function pcp(){
 var margin = {top: 50, right: 50, bottom: 50, left: 80},
 			width = 780 - margin.left - margin.right,
 			height = 400 - margin.top - margin.bottom;
-
-	fetch('/pcp')
+console.log(" pcp country name : ",country_name)
+	fetch('/pcp/'+country_name)
         .then(function(response){
         return response.json()
         }).then(function(data)  {
@@ -70,7 +70,7 @@ var color = d3.scaleOrdinal()
 				background,
 				foreground;
 
-
+            d3.selectAll("#pcp svg").remove()
 			var svg = d3.select("#pcp").append("svg")
 					.attr("width", width + margin.left + margin.right)
 					.attr("height", height + margin.top + margin.bottom)

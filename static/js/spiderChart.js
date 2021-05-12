@@ -43,8 +43,6 @@ let svg_radar1 = RadarChart("#spider", data, radarChartOptions);
 
 }
 
-
-
 const max = Math.max;
 const sin = Math.sin;
 const cos = Math.cos;

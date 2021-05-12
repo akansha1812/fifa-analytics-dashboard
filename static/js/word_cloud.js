@@ -1,4 +1,4 @@
-function wc(age_start,age_end){
+function wc(){
 
 
 var xhr = new XMLHttpRequest();
@@ -12,7 +12,9 @@ xhr.onreadystatechange = function () {
         wc(data);
     }
 };
-var filter = JSON.stringify({"age_start": age_start, "age_end": age_end});
+var filter = JSON.stringify({"age_start": age_start,"age_end": age_end,"country_name":country_name,
+                             "value_start": value_start, "value_end":value_end,
+                             "rating_start":rating_start, "rating_end":rating_end});
 xhr.send(filter);
 
 function wc(data) {
