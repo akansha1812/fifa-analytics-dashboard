@@ -11,6 +11,7 @@ if not path.exists("static/fifa_processed_final.csv"):
 
 
 from flask import Flask, render_template,request, jsonify
+import random
 import pandas as pd
 app = Flask(__name__)
 
@@ -59,6 +60,7 @@ def player_card(prop):
     df_sc = df_sc.loc[df_sc['ID'].astype(str)== str(prop)]
     df_sc = df_sc[['Name','Age','Nationality','Club','Overall']]
     result = list(df_sc.T.to_dict().values())
+    print(result)
     return jsonify(result)
 
 
@@ -74,7 +76,8 @@ def pcp(prop):
     df_pcp_agg = df_pcp.groupby("Club").mean()
     df_pcp_agg['Wage'] = df_pcp_agg['Wage'].astype(str).astype(float)
     df_pcp_agg['Club'] = df_pcp_agg.index
-    df_pcp_agg = df_pcp_agg.sample(n = 15)
+    s = min(len(df_pcp_agg),22)
+    df_pcp_agg = df_pcp_agg.sample(n = s)
     result = list(df_pcp_agg.T.to_dict().values())
     return jsonify(result)
 
@@ -93,7 +96,9 @@ def pitch_plot(prop):
             position_map[int(n)]=pos
     df_sc = df_clean.copy()
     df_sc = df_sc.loc[df_sc['ID'].astype(str)== str(prop)]
-    
+    pos_list = ['LS','ST','RS','LW','LF','CF','RF','RW','LAM','CAM','RAM','LM','LCM','CM','RCM','RM','LWB','LDM','CDM','RDM','RWB','LB','LCB','CB','RCB','RB']
+    df_sc_pos = df_sc[pos_list]
+    df_sc_pos = df_sc_pos.apply(lambda x: (x-x.min())/(x.max()-x.min()), axis=1)
     for i, row in df_pos_map.iterrows():
         x = position_map[i+1]
         if df_sc['Position'].values[0]=='GK':
@@ -102,14 +107,15 @@ def pitch_plot(prop):
             if x=='GK':
                 df_pos_map.at[i,'ratio_origin'] = y/10
             else:
-                df_pos_map.at[i,'ratio_origin'] = 0
+                df_pos_map.at[i,'ratio_origin'] = 0.2
         else:
             if x=='GK':
-                df_pos_map.at[i,'ratio_origin'] = 0
+                df_pos_map.at[i,'ratio_origin'] = 0.1
             else:
-                y = int(df_sc[x].values[0].split("+")[0])/10
+                # y = int(df_sc[x].values[0].split("+")[0])/10
                 # print(y)
-                df_pos_map.at[i,'ratio_origin'] = int(df_sc[x].values[0].split("+")[0])/100
+                # df_pos_map.at[i,'ratio_origin'] = int(df_sc[x].values[0].split("+")[0])/100
+                df_pos_map.at[i,'ratio_origin'] = df_sc_pos[x].values[0]
     
     result = list(df_pos_map.T.to_dict().values())
     # print("Player heat Map : ",result)
@@ -147,7 +153,12 @@ def wc_filter():
         x1['Overall'] = 40
         x = x.append(x1)
         x = x.sample(frac=1)
-        x['c'] = (x.index)%9 +1
+        
+        l = []
+        for i in range(256):
+            l.append(i)
+        random_num = random.choice(l)
+        x['c'] = (x.index+100)%256 +1
         result = list(x.T.to_dict().values())
 
     return jsonify(result)

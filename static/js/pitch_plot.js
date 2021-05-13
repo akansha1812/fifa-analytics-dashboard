@@ -1,5 +1,7 @@
 function pitch_plot(ID) {
 
+d3.select("#pitch_plot svg").remove();
+
 lineColor = "#000";
 lineWidth = 1;
 //pitchColor = "#eee";
@@ -29,11 +31,6 @@ var data = data_input;
 
 console.log(data)
 
-document.getElementById('name').innerHTML = "Name: " + data[0].Name;
-document.getElementById('age').innerHTML = "Age: " + data[0].Age;
-document.getElementById('nationality').innerHTML = "Nationality: " + data[0].Nationality;
-document.getElementById('club').innerHTML = "Club: " + data[0].Club;
-document.getElementById('overall').innerHTML = "Overall: " + data[0].Overall;
 
 
 

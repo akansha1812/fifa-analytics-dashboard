@@ -4,7 +4,7 @@ function line_plot(column_name) {
 // set the dimensions and margins of the graph
 var margin = {top: 10, right: 30, bottom: 30, left: 60},
     width = 460 - margin.left - margin.right,
-    height = 400 - margin.top - margin.bottom;
+    height = 100 - margin.top - margin.bottom;
 
 // append the svg object to the body of the page
 d3.selectAll("#"+column_name+" svg").remove()
@@ -29,6 +29,7 @@ fetch('/linePlot/'+country_name+'/'+column_name)
       .range([ 0, width ]);
     xAxis = svg.append("g")
       .attr("transform", "translate(0," + height + ")")
+      .attr("id", "xaxis_"+column_name)
       .call(d3.axisBottom(x));
 
     // Add Y axis
@@ -36,7 +37,8 @@ fetch('/linePlot/'+country_name+'/'+column_name)
       .domain([0, d3.max(data, function(d) { return +d.frequency; })])
       .range([ height, 0 ]);
     yAxis = svg.append("g")
-      .call(d3.axisLeft(y));
+      .attr("id", "yaxis_"+column_name)
+      .call(d3.axisLeft(y).ticks(4));
 
     // Add a clipPath: everything out of this area won't be drawn.
     var clip = svg.append("defs").append("svg:clipPath")
@@ -63,6 +65,8 @@ fetch('/linePlot/'+country_name+'/'+column_name)
       .attr("fill", "none")
       .attr("stroke", "steelblue")
       .attr("stroke-width", 1.5)
+      .transition()
+      .duration(1000)
       .attr("d", d3.line()
         .x(function(d) { return x(d[column_name]) })
         .y(function(d) { return y(d.frequency) })
@@ -107,7 +111,7 @@ fetch('/linePlot/'+country_name+'/'+column_name)
       }
 
       // Update axis and line position
-      xAxis.transition().duration(1000).call(d3.axisBottom(x))
+      d3.select('#xaxis_'+column_name).transition().duration(1000).call(d3.axisBottom(x))
       line
           .select('.'+column_name)
           .transition()
@@ -146,7 +150,7 @@ fetch('/linePlot/'+country_name+'/'+column_name)
             rating_end   = 200}
 
       wc();
-      xAxis.transition().call(d3.axisBottom(x))
+      d3.select('#xaxis_'+column_name).transition().call(d3.axisBottom(x))
       line
         .select('.'+column_name)
         .transition()
