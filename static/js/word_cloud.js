@@ -71,6 +71,7 @@ var color = d3.scaleOrdinal(d3.schemeCategory10);
         .on('click', function(d) {
         console.log("Id AND Name : ",d.id,' , ',d.text )
         createSpiderChart(d.id,d.text)
+        pitch_plot(d.id)
         player_card(d.id)});
 }
 

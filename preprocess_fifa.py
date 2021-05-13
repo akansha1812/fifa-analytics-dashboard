@@ -23,6 +23,10 @@ def clean_date(text):
 df['Contract Valid Until'] = df['Contract Valid Until'].replace(r'\d{1,2}-\w{3}-', '20', regex=True)
 df['Release Clause'] = df['Release Clause'].str.replace('€','')
 df['Release Clause'] = (df['Release Clause'].replace(r'[KMB]+$', '', regex=True).astype(float) * df['Release Clause'].str.extract(r'[\d\.]+([KMB]+)', expand=False).fillna(1).replace(['K','M', 'B'], [10**3, 10**6, 10**9]).astype(int))
+pos_list = ['LS','ST','RS','LW','LF','CF','RF','RW','LAM','CAM','RAM','LM','LCM','CM','RCM','RM','LWB','LDM','CDM','RDM','RWB','LB','LCB','CB','RCB','RB']
+for x in pos_list:
+    df[x] = df[x].apply(lambda x: str(x).split("+")[0].replace("nan","0"))
+df[pos_list] = df[pos_list].astype(int)
 df.to_csv('static/fifa_processed_final.csv')
 
 
@@ -46,11 +50,11 @@ for i, row in NationIndex.iterrows():
             NationIndex.at[i,'id']=id
 
 NationIndex['id'] = NationIndex['id'].fillna(0)
-NationIndex.to_csv('nationality_counts.csv')
+# NationIndex.to_csv('nationality_counts.csv')
 
 
 #Processing data for Line Chart
 age_counts = pd.DataFrame(df.Age.value_counts().reset_index().values, columns=["age", "frequency"])
 age_counts = age_counts.sort_index(axis = 0, ascending=True)
 age_counts = age_counts.sort_values(by=['age'])
-age_counts.to_csv('age_counts.csv')
+# age_counts.to_csv('age_counts.csv')

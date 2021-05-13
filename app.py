@@ -11,9 +11,12 @@ if not path.exists("static/fifa_processed_final.csv"):
 
 
 from flask import Flask, render_template,request, jsonify
+import random
 import pandas as pd
 app = Flask(__name__)
 
+df_clean = pd.read_csv("static/fifa_processed_final.csv")
+df_pos_map = pd.read_csv("static/test_pitch.csv")
 
 
 
@@ -57,6 +60,7 @@ def player_card(prop):
     df_sc = df_sc.loc[df_sc['ID'].astype(str)== str(prop)]
     df_sc = df_sc[['Name','Age','Nationality','Club','Overall']]
     result = list(df_sc.T.to_dict().values())
+    print(result)
     return jsonify(result)
 
 
@@ -67,20 +71,56 @@ def pcp(prop):
     df_pcp = df_clean.copy()
     if prop!='world':
         df_pcp = df_pcp.loc[df_pcp['Country'].astype(str) == str(prop)]
-    print("check for countries here : ",prop)
-    print(df_pcp["Country"])
     df_pcp = df_pcp[['Club','Age','Value','Wage','Overall','Release Clause']]
     attr_cols = ['Age','Value','Wage','Overall','Release Clause']
     df_pcp_agg = df_pcp.groupby("Club").mean()
     df_pcp_agg['Wage'] = df_pcp_agg['Wage'].astype(str).astype(float)
     df_pcp_agg['Club'] = df_pcp_agg.index
-    df_pcp_agg = df_pcp_agg.sample(n = 15)
+    s = min(len(df_pcp_agg),22)
+    df_pcp_agg = df_pcp_agg.sample(n = s)
     result = list(df_pcp_agg.T.to_dict().values())
     return jsonify(result)
 
 
-
-df_clean = pd.read_csv("static/fifa_processed_final.csv")
+@app.route("/pitch_plot/<prop>")
+def pitch_plot(prop):
+    f = open("static/position-map.txt","r")
+    position_map = {}
+    for line in f:
+        pos = line.split("\t")[0]
+        # print(pos)
+        nos = line.split("\t")[1].replace("\n", "").replace(" ", "").split(",")
+        # print(nos)
+        for n in nos:
+            # print(n)
+            position_map[int(n)]=pos
+    df_sc = df_clean.copy()
+    df_sc = df_sc.loc[df_sc['ID'].astype(str)== str(prop)]
+    pos_list = ['LS','ST','RS','LW','LF','CF','RF','RW','LAM','CAM','RAM','LM','LCM','CM','RCM','RM','LWB','LDM','CDM','RDM','RWB','LB','LCB','CB','RCB','RB']
+    df_sc_pos = df_sc[pos_list]
+    df_sc_pos = df_sc_pos.apply(lambda x: (x-x.min())/(x.max()-x.min()), axis=1)
+    for i, row in df_pos_map.iterrows():
+        x = position_map[i+1]
+        if df_sc['Position'].values[0]=='GK':
+            gk_cols = ['GKDiving','GKHandling','GKKicking','GKPositioning','GKReflexes']
+            y = df_sc[gk_cols].astype(str).astype(float).mean(axis=1)
+            if x=='GK':
+                df_pos_map.at[i,'ratio_origin'] = y/10
+            else:
+                df_pos_map.at[i,'ratio_origin'] = 0.2
+        else:
+            if x=='GK':
+                df_pos_map.at[i,'ratio_origin'] = 0.1
+            else:
+                # y = int(df_sc[x].values[0].split("+")[0])/10
+                # print(y)
+                # df_pos_map.at[i,'ratio_origin'] = int(df_sc[x].values[0].split("+")[0])/100
+                df_pos_map.at[i,'ratio_origin'] = df_sc_pos[x].values[0]
+    
+    result = list(df_pos_map.T.to_dict().values())
+    # print("Player heat Map : ",result)
+    return jsonify(result)
+    
 
 
 @app.route("/wc_filter/", methods=['GET', 'POST'])
@@ -113,7 +153,12 @@ def wc_filter():
         x1['Overall'] = 40
         x = x.append(x1)
         x = x.sample(frac=1)
-        x['c'] = (x.index)%9 +1
+        
+        l = []
+        for i in range(256):
+            l.append(i)
+        random_num = random.choice(l)
+        x['c'] = (x.index+100)%256 +1
         result = list(x.T.to_dict().values())
 
     return jsonify(result)
@@ -131,7 +176,6 @@ def linePlot(prop,prop2):
     age_counts = age_counts.sort_index(axis=0, ascending=True)
     age_counts = age_counts.sort_values(by=[column_name])
     result = list(age_counts.T.to_dict().values())
-    print("line plot : " , age_counts)
     return jsonify(result)
 
 
