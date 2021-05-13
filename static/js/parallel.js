@@ -1,7 +1,7 @@
 function pcp(){
 
-var margin = {top: 50, right: 50, bottom: 50, left: 80},
-			width = 780 - margin.left - margin.right,
+var margin = {top: 50, right: 50, bottom: 50, left: 150},
+			width = 750 - margin.left - margin.right,
 			height = 400 - margin.top - margin.bottom;
 console.log(" pcp country name : ",country_name)
 	fetch('/pcp/'+country_name)

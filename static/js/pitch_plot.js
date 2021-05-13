@@ -6,7 +6,7 @@ lineColor = "#000";
 lineWidth = 1;
 //pitchColor = "#eee";
 pitchColor = "white";
-pitchMultiplier = 8;
+pitchMultiplier = 5;
 pitchWidth = 105;
 pitchHeight = 68;
 margin = ({top: 20, right: 20, bottom: 20, left: 20});
@@ -207,14 +207,14 @@ svg.append('path')
   .attr('marker-end', 'url(#arrow)')
   .attr('fill', 'none');   
 
-svg.append("text")
-  .attr("class", "title")
-  .attr("x", (width / 10))             
-  .attr("y", 0 + (margin.top / 2))
-  .attr("text-anchor", "left")  
-  .style("font-size", "14px") 
-  .style("font-weight","bold")
-  .text("Messi Passing Transitions");   
+// svg.append("text")
+//   .attr("class", "title")
+//   .attr("x", (width / 10))             
+//   .attr("y", 0 + (margin.top / 2))
+//   .attr("text-anchor", "left")  
+//   .style("font-size", "14px") 
+//   .style("font-weight","bold")
+//   .text("Messi Passing Transitions");   
 
 pitch.selectAll("g")
     .data(data)
@@ -223,8 +223,8 @@ pitch.selectAll("g")
     .attr("class", "zone")
     .attr('x', d => d.x1)
     .attr('y', d => d.y1)
-    .attr('width', 70)
-    .attr('height', 68)
+    .attr('width', 43.75)
+    .attr('height', 42.5)
     .attr('fill-opacity', '0.6')
     .style('fill', d => d3.interpolateGreens(d.ratio_origin));
 

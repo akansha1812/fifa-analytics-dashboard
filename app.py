@@ -138,19 +138,19 @@ def wc_filter():
         df_wc = df_wc[['Name','Overall','ID']]
         s = min(len(df_wc[(df_wc['Overall'] <= 80)]),20)
         x = df_wc[(df_wc['Overall'] <= 80)].sample(n=s)
-        x['Overall'] = 7
+        x['Overall'] = 5
         s = min(len(df_wc[(df_wc['Overall'] <= 87) & (df_wc['Overall'] > 80)]),45)
         x1 = df_wc[(df_wc['Overall'] <= 87) & (df_wc['Overall'] > 80)].sample(n=s)
-        x1['Overall'] = 10
+        x1['Overall'] = 7
         x = x.append(x1)
         x1 = df_wc[(df_wc['Overall'] <= 90) & (df_wc['Overall'] > 87)]
-        x1['Overall'] =15
+        x1['Overall'] =10
         x = x.append(x1)
         x1 = df_wc[(df_wc['Overall'] <= 92) & (df_wc['Overall'] > 90)]
-        x1['Overall'] = 25
+        x1['Overall'] = 20
         x = x.append(x1)
         x1 = df_wc[(df_wc['Overall'] > 92)]
-        x1['Overall'] = 40
+        x1['Overall'] = 30
         x = x.append(x1)
         x = x.sample(frac=1)
         

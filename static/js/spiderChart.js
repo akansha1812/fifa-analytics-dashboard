@@ -24,8 +24,8 @@ var margin = { top: 50, right: 80, bottom: 50, left: 80 },
 
 
 var radarChartOptions = {
-			  w: 290,
-			  h: 350,
+			  w: 200,
+			  h: 250,
 			  margin: margin,
 			  levels: 5,
 			  legend: { title: 'Player Attack Ability', translateX: 100, translateY: 40 },

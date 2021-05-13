@@ -13,7 +13,7 @@ var tip = d3.tip()
 
 var margin = {top: 0, right: 0, bottom: 0, left: 0},
             width = 660 - margin.left - margin.right,
-            height = 360 - margin.top - margin.bottom;
+            height = 310 - margin.top - margin.bottom;
 
 var color = d3.scaleThreshold()
     .domain([0,1,5,10,50,100,500,1000,1500,1700])
@@ -24,12 +24,13 @@ var path = d3.geoPath();
 var svg = d3.select("#world_map")
             .append("svg")
             .attr("width", width)
+            .attr("style", "margin-left:-100px;margin-top:20px;")
             .attr("height", height)
             .append('g')
             .attr('class', 'map');
 
 var projection = d3.geoMercator()
-                   .scale(80)
+                   .scale(70)
                   .translate( [width / 2, height / 1.5]);
 
 var path = d3.geoPath().projection(projection);

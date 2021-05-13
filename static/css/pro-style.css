@@ -118,6 +118,26 @@ svg {
   stroke-width: 1px;
 }
 
+
+.box {
+  
+  /*margin-top: 10vh;*/
+    /* background-image: linear-gradient(to left, #cc2b5e, #753a88); */
+    border-radius: 10px;
+    box-shadow: 7px 7px 30px;
+    margin: 5px;
+   /* padding: 10px;
+    margin-left: 5vh;
+    height: 40vh;*/
+    background-color: rgba(0, 0, 0, 0.8);
+
+
+    backdrop-filter: blur(30px);
+    /*cursor: crosshair;*/
+}
+
+
+
   .background path {
         fill: none;
         stroke: #ddd;
