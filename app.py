@@ -81,6 +81,19 @@ def pcp(prop):
     result = list(df_pcp_agg.T.to_dict().values())
     return jsonify(result)
 
+@app.route("/club_logos/<prop>")
+def club_logos(prop):
+    prop = str(prop)
+    df_cl = df_clean.copy()
+    if prop!='world':
+        df_cl = df_cl.loc[df_cl['Country'].astype(str) == str(prop)]
+    df_cl = df_cl[['Club']]
+    df_cl.drop_duplicates(subset ="Club",keep = False, inplace = True)
+    s = min(len(df_cl),15)
+    df_cl = df_cl.sample(n = s)
+    result = list(df_cl.T.to_dict().values())
+    return jsonify(result)
+
 
 @app.route("/pitch_plot/<prop>")
 def pitch_plot(prop):

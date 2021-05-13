@@ -93,7 +93,8 @@ function ready(error, data, population) {
         line_plot('Age');
         line_plot('Value');
         line_plot('Overall');
-        wc()
+        wc();
+        club_logo();
         })
         .on('dblclick',function(d){
         country_name = "world"
@@ -101,7 +102,7 @@ function ready(error, data, population) {
         line_plot('Age');
         line_plot('Value');
         line_plot('Overall');
-        wc()
+        wc();
         });
 
   svg.append("path")
